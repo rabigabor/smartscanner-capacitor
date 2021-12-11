@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina3_5" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SmartScannerViewController" customModule="App" customModuleProvider="target">
+            <connections>
+                <outlet property="cameraView" destination="JFd-v4-hZc" id="7uT-cZ-baf"/>
+                <outlet property="view" destination="iN0-l3-epB" id="fwG-ic-9uc"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JFd-v4-hZc">
+                    <rect key="frame" x="0.0" y="48" width="320" height="432"/>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ExX-h0-94N">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="48"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yXM-LP-Jy7">
+                            <rect key="frame" x="30" y="11" width="15" height="26"/>
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <state key="normal">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <imageReference key="image" image="flashlight.on.fill" catalog="system" symbolScale="large"/>
+                            </state>
+                            <connections>
+                                <action selector="toggleTorch:" destination="-1" eventType="primaryActionTriggered" id="cIs-Aw-Dog"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Duf-BI-XUp">
+                            <rect key="frame" x="269" y="11" width="21" height="26"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <state key="normal">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <imageReference key="image" image="xmark" catalog="system" symbolScale="large"/>
+                            </state>
+                            <connections>
+                                <action selector="exitRecognition:" destination="-1" eventType="primaryActionTriggered" id="J1q-Hb-mz0"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <viewLayoutGuide key="safeArea" id="a24-6n-UNL"/>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="a24-6n-UNL" firstAttribute="trailing" secondItem="Duf-BI-XUp" secondAttribute="trailing" constant="30" id="5Mu-wP-yas"/>
+                        <constraint firstItem="yXM-LP-Jy7" firstAttribute="centerY" secondItem="a24-6n-UNL" secondAttribute="centerY" id="OOk-Yc-X07"/>
+                        <constraint firstItem="yXM-LP-Jy7" firstAttribute="leading" secondItem="a24-6n-UNL" secondAttribute="leading" constant="30" id="eWH-rp-epe"/>
+                        <constraint firstItem="Duf-BI-XUp" firstAttribute="centerY" secondItem="a24-6n-UNL" secondAttribute="centerY" id="pwn-DO-z2K"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="ExX-h0-94N" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.1" id="3Qe-eH-0ad"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="JFd-v4-hZc" secondAttribute="trailing" id="5s9-ES-awV"/>
+                <constraint firstItem="JFd-v4-hZc" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="0.9" id="Pcs-Vm-65s"/>
+                <constraint firstItem="ExX-h0-94N" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="dSp-dn-KoI"/>
+                <constraint firstItem="JFd-v4-hZc" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="hCS-UB-gG2"/>
+                <constraint firstItem="ExX-h0-94N" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="oLF-7q-CIe"/>
+                <constraint firstItem="ExX-h0-94N" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="t46-gc-bZ5"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="JFd-v4-hZc" secondAttribute="bottom" id="vHu-pK-OjY"/>
+            </constraints>
+            <point key="canvasLocation" x="137.68115942028987" y="93.080357142857139"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="flashlight.on.fill" catalog="system" width="76" height="128"/>
+        <image name="xmark" catalog="system" width="128" height="113"/>
+    </resources>
+</document>

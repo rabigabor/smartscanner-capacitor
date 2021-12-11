@@ -8,7 +8,7 @@
 import Foundation
 
 
-public enum MrzDocumentCode {
+public enum MrzDocumentCode: String {
     /**
      * A passport, P or IP.
      * ... maybe Travel Document that is very similar to the passport.
@@ -51,7 +51,7 @@ public enum MrzDocumentCode {
         // 2-letter checks
         switch code{
             case "IV":
-                throw MrzError.ParseException("IV document code is not allowed", mrz, try! MrzRange(0, 2, 0), nil)
+                throw MrzError.ParseException("IV document code is not allowed", mrz, try MrzRange(0, 2, 0), nil)
         case "AC": return .CrewMember;
         case "ME": return .Migrant;
         case "TD": return .Migrant; // travel document
@@ -72,6 +72,6 @@ public enum MrzDocumentCode {
         }
 
 
-        throw MrzError.ParseException("Unsupported document code: " + code, mrz, try! MrzRange(0, 2, 0), nil);
+        throw MrzError.ParseException("Unsupported document code: " + code, mrz, try MrzRange(0, 2, 0), nil);
     }
 }

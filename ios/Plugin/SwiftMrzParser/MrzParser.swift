@@ -25,10 +25,10 @@ public class MrzParser{
      * Creates new parser which parses given MRZ record.
      * @param mrz the MRZ record, not null.
      */
-    init(_ mrz: String) {
+    init(_ mrz: String) throws {
         self.mrz = mrz;
         self.rows = mrz.components(separatedBy: "\n");
-        self.format = try! MrzFormat.get(mrz);
+        self.format = try MrzFormat.get(mrz);
     }
 
     /**
@@ -57,14 +57,14 @@ public class MrzParser{
         let names: [String] = str.components(separatedBy: "<<");
         var surname: String;
         var givenNames: String = "";
-        surname = parseString(try MrzRange(range.column, range.column + names[0].length, range.row));
+        surname = try parseString(try MrzRange(range.column, range.column + names[0].length, range.row));
         if (names.count == 1){
-            givenNames = parseNameString(try MrzRange(range.column, range.column + names[0].length, range.row));
+            givenNames = try parseNameString(try MrzRange(range.column, range.column + names[0].length, range.row));
             surname = "";
         }
         else if (names.count > 1){
-            surname = parseNameString(try MrzRange(range.column, range.column + names[0].length, range.row));
-            givenNames = parseNameString(try MrzRange(range.column + names[0].length + 2, range.column + str.length, range.row));
+            surname = try parseNameString(try MrzRange(range.column, range.column + names[0].length, range.row));
+            givenNames = try parseNameString(try MrzRange(range.column + names[0].length + 2, range.column + str.length, range.row));
         }
         return [surname, givenNames];
     }
@@ -77,7 +77,7 @@ public class MrzParser{
     public func rawValue(_ range: [MrzRange]) -> String {
         var sb:String = "";
         for r in range {
-            sb.append(rows[r.row][r.column..<r.columnTo]);
+            sb.append(rows[r.row][r.column..<min(r.columnTo, rows[r.row].length)]);
         }
         return sb;
     }
@@ -88,7 +88,7 @@ public class MrzParser{
      */
     public func checkValidCharacters(_ range: MrzRange) throws {
         let str: String = rawValue([range]);
-        for i in 0...str.length {
+        for i in stride(from: 0,to:str.length, by:1){
             let c: String =  str[i];
             if (c != MrzParser.FILLER && (c < "0" || c > "9") && (c < "A" || c > "Z")) {
                 throw MrzError.ParseException("Invalid character in MRZ record: " + c, mrz, try MrzRange(range.column + i, range.column + i + 1, range.row), format);
@@ -101,8 +101,8 @@ public class MrzParser{
      * @param range the range
      * @return parsed string.
      */
-    public func parseString(_ range: MrzRange) -> String {
-        try! checkValidCharacters(range);
+    public func parseString(_ range: MrzRange) throws -> String {
+        try checkValidCharacters(range);
         var str: String = rawValue([range]);
         while str.hasSuffix("<") {
             str = str[0..<(str.length-1)];
@@ -116,8 +116,8 @@ public class MrzParser{
      * @param range the range
      * @return parsed string.
      */
-    public func parseNumberString(_ range: MrzRange) -> String {
-        try! checkValidCharacters(range);
+    public func parseNumberString(_ range: MrzRange) throws -> String {
+        try checkValidCharacters(range);
         var str: String = (rawValue([range])
                             .replacingOccurrences(of: "O", with: "0")
                             .replacingOccurrences(of: "I", with:"1")
@@ -137,8 +137,8 @@ public class MrzParser{
      * @param range the range
      * @return parsed string.
      */
-    public func parseNameString(_ range: MrzRange) -> String {
-        try! checkValidCharacters(range);
+    public func parseNameString(_ range: MrzRange) throws -> String {
+        try checkValidCharacters(range);
         var str: String = rawValue([range]);
         while (str.hasSuffix("<") ||
                 str.hasSuffix("<<S") || // Sometimes MLKit perceives `<` as `S`
@@ -159,8 +159,8 @@ public class MrzParser{
      * @param range the range
      * @return parsed string.
      */
-    public func parseNameStringWithSeparators(_ range: MrzRange) -> String {
-        try! checkValidCharacters(range);
+    public func parseNameStringWithSeparators(_ range: MrzRange) throws -> String {
+        try checkValidCharacters(range);
         var str: String = rawValue([range]);
         while (str.hasSuffix("<") ||
                 str.hasSuffix("<<S") || // Sometimes MLKit perceives `<` as `S`
@@ -185,8 +185,8 @@ public class MrzParser{
      * @param range the range
      * @return parsed string.
      */
-    public func parseDocuString(_ range: MrzRange) -> String {
-        try! checkValidCharacters(range);
+    public func parseDocuString(_ range: MrzRange) throws -> String {
+        try checkValidCharacters(range);
         var str: String = rawValue([range]);
         while str.hasSuffix("<") {
             str = str[0..<(str.length-1)];
@@ -202,8 +202,8 @@ public class MrzParser{
      * @param fieldName (optional) field name. Used only when validity check fails.
      * @return true if check digit is valid, false if not
      */
-    public func checkDigit(_ col: Int, _ row: Int, _ strRange: MrzRange, _ fieldName: String) -> Bool {
-        return checkDigit(col, row, rawValue([strRange]), fieldName);
+    public func checkDigit(_ col: Int, _ row: Int, _ strRange: MrzRange, _ fieldName: String) throws -> Bool {
+        return try checkDigit(col, row, rawValue([strRange]), fieldName);
     }
 
     /**
@@ -214,8 +214,8 @@ public class MrzParser{
      * @param fieldName (optional) field name. Used only when validity check fails.
      * @return true if check digit is valid, false if not
      */
-    public func checkDigitWithoutFiller(_ col: Int, _ row: Int, _ strRange: MrzRange, _ fieldName: String) -> Bool {
-        return checkDigit(col, row, rawValue([strRange]).replacingOccurrences(of:"<", with:""), fieldName);
+    public func checkDigitWithoutFiller(_ col: Int, _ row: Int, _ strRange: MrzRange, _ fieldName: String) throws -> Bool {
+        return try checkDigit(col, row, rawValue([strRange]).replacingOccurrences(of:"<", with:""), fieldName);
     }
 
     /**
@@ -226,15 +226,29 @@ public class MrzParser{
      * @param fieldName (optional) field name. Used only when validity check fails.
      * @return true if check digit is valid, false if not
      */
-    public func checkDigit(_ col: Int, _ row: Int, _ str: String, _ fieldName: String) -> Bool {
+    public func checkDigit(_ col: Int, _ row: Int, _ str: String, _ fieldName: String) throws -> Bool {
 
         /*
          * If the check digit validation fails, this will contain the location.
          */
 
-        let digit: String = MrzParser.computeCheckDigit(str)
-        var checkDigit: String = rows[row][col];
+        let digit: String = try MrzParser.computeCheckDigit(str)
+        var checkDigit: String = "0";
+        if(rows[row].length < col){
+            checkDigit = rows[row][col];
+        }else{
+            print("PARSER getting last \(rows[row].length) row \(rows[row])")
+            checkDigit = rows[row][rows[row].length-1];
+        }
         if ((checkDigit == MrzParser.FILLER) || (checkDigit == "O")) {
+            if(checkDigit == "O"){
+
+                let docNumWithNewCheckDigit: String = str + "0";
+                print("docNumWithNewCheckDigit \(docNumWithNewCheckDigit) \(str) \(checkDigit)")
+                
+                mrz = mrz.replacingOccurrences(of: (str+checkDigit), with: docNumWithNewCheckDigit);
+                rows = mrz.components(separatedBy: "\n");
+            }
             checkDigit = "0";
         }
         print("PARSER","checkDigit |"+digit+"|"+checkDigit+"|"+fieldName+"|"+str);
@@ -249,7 +263,7 @@ public class MrzParser{
             
 
             var lists: [[Character]] = []
-            for _ in 0...occurences.count{
+            for _ in stride(from: 0,to:occurences.count, by:1){
                 lists.append([guess0, guessO])
             }
             let products: [[Character]] = cartesianProduct(lists);
@@ -258,11 +272,11 @@ public class MrzParser{
 
             for product in products{
                 var newDocumentNumber = Array(str);
-                for j in 0...product.count{
+                for j in stride(from: 0,to:product.count, by:1){
                     newDocumentNumber[occurences[j]] = product[j];
                 }
                 let newDocumentNumberStr = String(newDocumentNumber)
-                let newDigit: String = MrzParser.computeCheckDigit(newDocumentNumberStr)
+                let newDigit: String = try MrzParser.computeCheckDigit(newDocumentNumberStr)
                 print("PARSER","checkDigitNew |\(fieldName)|\(checkDigit)|\(newDigit)|\(newDocumentNumberStr)|\((newDigit==checkDigit))");
                 if(newDigit == checkDigit) {
                     print("SmartScanner", "REPLACING \(str) to \(newDocumentNumberStr)");
@@ -323,8 +337,8 @@ public class MrzParser{
      * @param row the 0-based row
      * @return sex, never null.
      */
-    public func parseSex(_ col: Int, _ row: Int) -> MrzSex {
-        return try! MrzSex.fromMrz(rows[row][col]);
+    public func parseSex(_ col: Int, _ row: Int) throws -> MrzSex {
+        return try MrzSex.fromMrz(rows[row][col]);
     }
     private static var MRZ_WEIGHTS: [Int] = [7, 3, 1];
 
@@ -355,11 +369,11 @@ public class MrzParser{
      * @param str the string
      * @return check digit in range of 0..9, inclusive. See <a href="http://www2.icao.int/en/MRTD/Downloads/Doc%209303/Doc%209303%20English/Doc%209303%20Part%203%20Vol%201.pdf">MRTD documentation</a> part 15 for details.
      */
-    public static func computeCheckDigit(_ str: String) -> String {
+    public static func computeCheckDigit(_ str: String) throws -> String {
         var result: Int = 0;
         var i: Int = 0;
         for c in str{
-            result += (try! getCharacterValue(c)) * MrzParser.MRZ_WEIGHTS[i % MrzParser.MRZ_WEIGHTS.count];
+            result += (try getCharacterValue(c)) * MrzParser.MRZ_WEIGHTS[i % MrzParser.MRZ_WEIGHTS.count];
             i += 1
         }
         return String(result % 10);
@@ -370,8 +384,8 @@ public class MrzParser{
      * @param str the string
      * @return check digit in range of 0..9, inclusive. See <a href="http://www2.icao.int/en/MRTD/Downloads/Doc%209303/Doc%209303%20English/Doc%209303%20Part%203%20Vol%201.pdf">MRTD documentation</a> part 15 for details.
      */
-    public static func computeCheckDigitChar(_ str: String) -> String{
-        return computeCheckDigit(str);
+    public static func computeCheckDigitChar(_ str: String) throws -> String{
+        return try computeCheckDigit(str);
     }
 
     /**
@@ -379,10 +393,10 @@ public class MrzParser{
      * @param mrz MRZ to parse.
      * @return record class.
      */
-    public static func parse(_ mrz: String) -> MrzRecord {
-        let result: MrzRecord = try! MrzFormat.get(mrz).newRecord();
+    public static func parse(_ mrz: String) throws -> MrzRecord {
+        let result: MrzRecord = try MrzFormat.get(mrz).newRecord();
         print("MRZRECORD TYPE",result.toString());
-        try! result.fromMrz(mrz);
+        try result.fromMrz(mrz);
         return result;
     }
 
@@ -446,7 +460,7 @@ public class MrzParser{
             string = string[0..<length];
         }
         var stringArray = Array(string)
-        for i in 0...stringArray.count {
+        for i in stride(from: 0,to:stringArray.count, by:1) {
             if (!isValid(String(stringArray[i]))) {
                 stringArray[i] = FILLER_CHAR
             }
@@ -475,24 +489,31 @@ public class MrzParser{
         }
         let surname = pSurname.replacingOccurrences(of:", ", with:" ");
         let givenNames = pGivenNames.replacingOccurrences(of:", ", with:" ");
-        var surnames: [String] = surname.trimmingCharacters(in: .whitespacesAndNewlines).split(usingRegex: "[ \n\t\r]+");
-        var given: [String] = givenNames.trimmingCharacters(in: .whitespacesAndNewlines).split(usingRegex: "[ \n\t\r]+");
-        for i in 0...surnames.count{
+        var surnames: [String] = try surname.trimmingCharacters(in: .whitespacesAndNewlines).split(usingRegex: "[ \n\t\r]+");
+        var given: [String] = try givenNames.trimmingCharacters(in: .whitespacesAndNewlines).split(usingRegex: "[ \n\t\r]+");
+        for i in stride(from: 0,to:surnames.count, by:1){
             surnames[i] = toMrz(surnames[i], -1);
         }
-        for i in 0...given.count{
+        for i in stride(from: 0,to:given.count, by:1){
             given[i] = toMrz(given[i], -1);
         }
         // truncate
         var nameSize: Int = getNameSize(surnames, given);
         var currentlyTruncating: [String] = given;
         var currentlyTruncatingIndex: Int = given.count - 1;
+        print("names", surnames, given)
         while nameSize > length {
+            print("nameToMrz", nameSize, length)
             let ct: String = currentlyTruncating[currentlyTruncatingIndex];
             let ctsize: Int = ct.length;
+            print(ct, ctsize)
+            print("if",(nameSize - ctsize + 1), length)
             if ((nameSize - ctsize + 1) <= length) {
+                print("ct1", ct, ct[0..<(ctsize - (nameSize - length))])
+                
                 currentlyTruncating[currentlyTruncatingIndex] = ct[0..<(ctsize - (nameSize - length))];
             } else {
+                print("ct2", ct, ct[0..<1])
                 currentlyTruncating[currentlyTruncatingIndex] = ct[0..<1];
                 currentlyTruncatingIndex = currentlyTruncatingIndex-1;
                 if (currentlyTruncatingIndex < 0) {

@@ -87,12 +87,12 @@ public class MrzRecord: CustomStringConvertible{
      */
     public func fromMrz(_ mrz: String) throws {
         if (self.format != (try MrzFormat.get(mrz))) {
-            throw MrzError.ParseException("invalid format: \((try MrzFormat.get(mrz)))", mrz, try! MrzRange(0, 0, 0), format);
+            throw MrzError.ParseException("invalid format: \((try MrzFormat.get(mrz)))", mrz, try MrzRange(0, 0, 0), format);
         }
-        code = try! MrzDocumentCode.parse(mrz);
+        code = try MrzDocumentCode.parse(mrz);
         code1 = mrz[0];
         code2 = mrz[1];
-        issuingCountry = MrzParser(mrz).parseString(try! MrzRange(2, 5, 0));
+        issuingCountry = try MrzParser(mrz).parseString(try MrzRange(2, 5, 0));
     }
     
     /**
@@ -108,7 +108,7 @@ public class MrzRecord: CustomStringConvertible{
      * Serializes this record to a valid MRZ record.
      * @return a valid MRZ record, not null, separated by \n
      */
-    public func toMrz() -> String{
+    public func toMrz() throws -> String{
         fatalError("Not implemented error")
     };
 }

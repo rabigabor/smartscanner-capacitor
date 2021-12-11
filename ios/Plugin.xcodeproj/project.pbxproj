@@ -29,6 +29,10 @@
 		9A96E493275EA67500A40037 /* SwiftMrzParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A96E485275EA67500A40037 /* SwiftMrzParser.swift */; };
 		9A96E494275EA67500A40037 /* MrzError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A96E486275EA67500A40037 /* MrzError.swift */; };
 		9A96E495275EA67500A40037 /* MrzRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A96E487275EA67500A40037 /* MrzRange.swift */; };
+		9ABC519E275EE6E000E582D6 /* SmartScannerUIView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9ABC519D275EE6E000E582D6 /* SmartScannerUIView.xib */; };
+		9ACD9D83275EAE4A005C4451 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD9D82275EAE4A005C4451 /* CameraView.swift */; };
+		9ACD9D87275EB267005C4451 /* UIUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD9D86275EB267005C4451 /* UIUtilities.swift */; };
+		9AE3B048275F107F002F26E9 /* MrzCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE3B047275F107F002F26E9 /* MrzCleaner.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +73,10 @@
 		9A96E485275EA67500A40037 /* SwiftMrzParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftMrzParser.swift; sourceTree = "<group>"; };
 		9A96E486275EA67500A40037 /* MrzError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MrzError.swift; sourceTree = "<group>"; };
 		9A96E487275EA67500A40037 /* MrzRange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MrzRange.swift; sourceTree = "<group>"; };
+		9ABC519D275EE6E000E582D6 /* SmartScannerUIView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SmartScannerUIView.xib; sourceTree = "<group>"; };
+		9ACD9D82275EAE4A005C4451 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
+		9ACD9D86275EB267005C4451 /* UIUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIUtilities.swift; sourceTree = "<group>"; };
+		9AE3B047275F107F002F26E9 /* MrzCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MrzCleaner.swift; sourceTree = "<group>"; };
 		F65BB2953ECE002E1EF3E424 /* Pods-PluginTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PluginTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PluginTests/Pods-PluginTests.release.xcconfig"; sourceTree = "<group>"; };
 		F6753A823D3815DB436415E3 /* Pods_PluginTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PluginTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -121,6 +129,9 @@
 				9A96E477275EA67500A40037 /* SwiftMrzParser */,
 				50E1A94720377CB70090CE1A /* Plugin.swift */,
 				50ADFF8B201F53D600D50D53 /* Plugin.h */,
+				9ACD9D82275EAE4A005C4451 /* CameraView.swift */,
+				9ABC519D275EE6E000E582D6 /* SmartScannerUIView.xib */,
+				9ACD9D86275EB267005C4451 /* UIUtilities.swift */,
 				50ADFFA72020EE4F00D50D53 /* Plugin.m */,
 				50ADFF8C201F53D600D50D53 /* Info.plist */,
 			);
@@ -157,6 +168,7 @@
 				9A96E485275EA67500A40037 /* SwiftMrzParser.swift */,
 				9A96E486275EA67500A40037 /* MrzError.swift */,
 				9A96E487275EA67500A40037 /* MrzRange.swift */,
+				9AE3B047275F107F002F26E9 /* MrzCleaner.swift */,
 			);
 			path = SwiftMrzParser;
 			sourceTree = "<group>";
@@ -217,6 +229,7 @@
 				50ADFF84201F53D600D50D53 /* Frameworks */,
 				50ADFF85201F53D600D50D53 /* Headers */,
 				50ADFF86201F53D600D50D53 /* Resources */,
+				27097B4B837AA04D5727D770 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -236,6 +249,7 @@
 				50ADFF8E201F53D600D50D53 /* Frameworks */,
 				50ADFF8F201F53D600D50D53 /* Resources */,
 				CCA81D3B7E26D0D727D24C84 /* [CP] Embed Pods Frameworks */,
+				CBA4474530E3F3BD701324D2 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -292,6 +306,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9ABC519E275EE6E000E582D6 /* SmartScannerUIView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -323,6 +338,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		27097B4B837AA04D5727D770 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Plugin/Pods-Plugin-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/MLKitTextRecognition/GoogleMVTextDetectorResources.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVTextDetectorResources.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Plugin/Pods-Plugin-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		AB5B3E54B4E897F32C2279DA /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -341,6 +374,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		CBA4474530E3F3BD701324D2 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PluginTests/Pods-PluginTests-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/MLKitTextRecognition/GoogleMVTextDetectorResources.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVTextDetectorResources.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PluginTests/Pods-PluginTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		CCA81D3B7E26D0D727D24C84 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -350,11 +401,25 @@
 				"${PODS_ROOT}/Target Support Files/Pods-PluginTests/Pods-PluginTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Capacitor/Capacitor.framework",
 				"${BUILT_PRODUCTS_DIR}/CapacitorCordova/Cordova.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleDataTransport/GoogleDataTransport.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
+				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Capacitor.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cordova.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleDataTransport.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -380,9 +445,12 @@
 				9A96E492275EA67500A40037 /* MrzParser.swift in Sources */,
 				9A96E48C275EA67500A40037 /* MrtdTd2.swift in Sources */,
 				9A96E489275EA67500A40037 /* MRP.swift in Sources */,
+				9ACD9D83275EAE4A005C4451 /* CameraView.swift in Sources */,
 				9A96E48F275EA67500A40037 /* MrzFormat.swift in Sources */,
 				9A96E491275EA67500A40037 /* MrzRecord.swift in Sources */,
 				9A96E48D275EA67500A40037 /* MrzDate.swift in Sources */,
+				9AE3B048275F107F002F26E9 /* MrzCleaner.swift in Sources */,
+				9ACD9D87275EB267005C4451 /* UIUtilities.swift in Sources */,
 				9A96E495275EA67500A40037 /* MrzRange.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

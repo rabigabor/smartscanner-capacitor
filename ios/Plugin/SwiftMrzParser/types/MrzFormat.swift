@@ -14,6 +14,10 @@ public class MrzFormat: Equatable{
     public final var columns: Int;
     
     
+    public func toString() -> String{
+        return "MrzFormat"
+    }
+    
     
     init(_ rows: Int, _ columns: Int) {
         self.rows = rows;
@@ -41,7 +45,7 @@ public class MrzFormat: Equatable{
         let dummyRow: Int = 44;
         var rows: [String] = mrz.components(separatedBy: "\n");
         let cols: Int = rows[0].count;
-        print("SmartScanner", "mrz: " + mrz);
+        //print("SmartScanner", "mrz: " + mrz);
         print("SmartScanner", "rows: " + rows.joined(separator: ", "));
         var mrzBuilder = String(mrz);
         for i in 0..<rows.count{
@@ -85,6 +89,10 @@ public class MRV_VISA_B: MrzFormat {
         super.init(2, 36)
     }
     
+    override public func toString() -> String{
+        return "MRV_VISA_B"
+    }
+    
     public override func newRecord() -> MrzRecord {
         return MrvB(self)
     }
@@ -105,6 +113,9 @@ public class MRTD_TD2: MrzFormat{
     }
     public override func newRecord() -> MrzRecord {
         return MrtdTd2(self)
+    }
+    override public func toString() -> String{
+        return "MRTD_TD2"
     }
 }
 /**
@@ -127,6 +138,9 @@ public class MRV_VISA_A: MrzFormat{
         }
         return mrzRows[0].starts(with:"V");
     }
+    override public func toString() -> String{
+        return "MRV_VISA_A"
+    }
 };
 /**
  * MRP Passport format: A two line long, 44 characters per line format.
@@ -137,6 +151,9 @@ public class PASSPORT: MrzFormat{
     }
     public override func newRecord() -> MrzRecord {
         return MRP(self)
+    }
+    override public func toString() -> String{
+        return "PASSPORT"
     }
 }
 
@@ -149,5 +166,8 @@ public class MRTD_TD1: MrzFormat{
     }
     public override func newRecord() -> MrzRecord {
         return MrtdTd1(self)
+    }
+    override public func toString() -> String{
+        return "MRTD_TD1"
     }
 }

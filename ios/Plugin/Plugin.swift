@@ -1,5 +1,6 @@
 import Foundation
 import Capacitor
+import AVFoundation
 
 /**
  * Please read the Capacitor iOS Plugin Development Guide
@@ -7,6 +8,9 @@ import Capacitor
  */
 @objc(SmartScannerPlugin)
 public class SmartScannerPlugin: CAPPlugin {
+    
+    public var call: CAPPluginCall?
+    public var lastFrame: CMSampleBuffer?
 
     @objc func echo(_ call: CAPPluginCall) {
         let value = call.getString("value") ?? ""
@@ -15,20 +19,19 @@ public class SmartScannerPlugin: CAPPlugin {
         ])
     }
     @objc func executeScanner(_ call: CAPPluginCall) {
+        self.call = call
         let options = call.getObject("options") ?? [:]
-        let mode = options["mode"] as! String
-        
-        let myDate = MrzDate(1994,6,3)
-        print(myDate.toString())
-        print(myDate.toMrz())
-        if(mode=="barcode"){
-            call.resolve(["scanner_result":["value": "DIGITHOTEL_OKMANYOLVASO|digithotel|demo|1938"]])
+        let mode = options["mode"] as! String        
+        self.showCamera(mode)
+        /*if(mode=="barcode"){
+            self.showCamera(mode)
+            /*call.resolve(["scanner_result":["value": "DIGITHOTEL_OKMANYOLVASO|digithotel|demo|1938"]])*/
         }else if(mode=="mrz"){
             call.resolve(["scanner_result":[
                 "code": "TypeI",
                 "code1": 73,
                 "code2": 68,
-                "dateOfBirth": "30/11/79",
+                "dateOfBirth": myDate.toString(),
                 "documentNumber": "AB1234567",
                 "expirationDate": "08/11/29",
                 "format": "MRTD_TD1",
@@ -40,7 +43,7 @@ public class SmartScannerPlugin: CAPPlugin {
                 "sex": "Male",
                 "surname": ""
               ]])
-        }
-        
+        }*/
+    
     }
 }

@@ -42,9 +42,19 @@ public class MrzDate: Equatable, Comparable, CustomStringConvertible {
         self.mrz = raw;
     }
 
-    //@Override
     public func toString() -> String{
         return "{\(day)/\(month)/\(year)}";
+    }
+    public func toStringNormal() -> String{
+        var yearFull: Int = year;
+        print("yearRR \((yearFull+100)) \((Calendar.current.component(.year, from: Date()) ))")
+        if ((yearFull+2000) > (Calendar.current.component(.year, from: Date()) + 5)){
+            yearFull += 1900;
+        } else {
+            yearFull += 2000;
+        }
+        
+        return "\(day)/\(month)/\(yearFull)";
     }
     public var description: String {
         return "{\(day)/\(month)/\(year)}";
