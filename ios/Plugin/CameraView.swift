@@ -62,6 +62,10 @@ class SmartScannerViewController: UIViewController {
     
     private var mode: String = ""
     
+    private var analyzeStart: Int64 = Int64(Date().timeIntervalSince1970*1000)
+    
+    private var analyzeTime: Int64 = 5000;
+    
     required init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?, mode: String, call: CAPPluginCall) {
         self.mode = mode
         self.call = call
@@ -108,6 +112,7 @@ class SmartScannerViewController: UIViewController {
       setUpAnnotationOverlayView()
       setUpCaptureSessionOutput()
       setUpCaptureSessionInput()
+        
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -240,7 +245,35 @@ class SmartScannerViewController: UIViewController {
         do{
             let cleanMrz = try self.cleaner.clean(rawFullRead)
             print("\n\n\n\(cleanMrz)")
+            print("timeee", analyzeStart, Int64(Date().timeIntervalSince1970*1000)-analyzeStart, analyzeTime)
             
+            if (!cleanMrz.starts(with: "I<HUN") || ((Int64(Date().timeIntervalSince1970*1000)-analyzeStart) > analyzeTime)){
+                print("ignoring analyzeTime \((!cleanMrz.starts(with: "I<HUN"))) or \(((Int64(Date().timeIntervalSince1970*1000)-analyzeStart) > analyzeTime)))")
+            }else{
+                print("still in analyzeTime and format is ok!")
+
+                if(
+                    !rawAll.contains("Anyja") &&
+                  !rawAll.contains("anyja") &&
+                  !rawAll.contains("Mother") &&
+                  !rawAll.contains("mother")
+                ){
+                    throw MrzError.IllegalArgument("Could not find mother's name.")
+                }else{
+                  print("Check mother's name OK")
+                }
+                if(
+                  !rawAll.contains("hely") &&
+                  !rawAll.contains("place") &&
+                  !rawAll.contains("Hely") &&
+                  !rawAll.contains("Place")
+                ){
+                    throw MrzError.IllegalArgument("Could not find birth place.")
+                }else{
+                  print("Check birth place OK")
+                }
+                print("rawAll", rawAll)
+            }
             let record = try self.cleaner.parseAndClean(cleanMrz)
             
             let dateOfBirth = record.dateOfBirth.toStringNormal()
@@ -259,7 +292,7 @@ class SmartScannerViewController: UIViewController {
             let surname = record.surname
             let format = record.format.toString()
             
-            let scannerResult: Dictionary<String, Any> = (["image": "",
+            let scannerResult: Dictionary<String, Any> = (["image": "---",
                 "code": code,
                 "code1": code1,
                 "code2": code2,
