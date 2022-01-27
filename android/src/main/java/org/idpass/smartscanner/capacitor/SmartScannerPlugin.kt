@@ -43,7 +43,7 @@ class SmartScannerPlugin : Plugin() {
     fun handleSmartScannerResult(call: PluginCall, result: ActivityResult) {
         if (result.resultCode == Activity.RESULT_CANCELED) {
             Timber.d("SmartScannerPlugin -- RESULT CANCELLED")
-            call.reject("Scanning Cancelled.")
+            call.reject("A kamera be lett zárva")
         } else {
             try {
                 Timber.d("SmartScannerPlugin -- resultCode ${result.resultCode}")
@@ -63,7 +63,7 @@ class SmartScannerPlugin : Plugin() {
                         e.printStackTrace()
                     }
                 } else {
-                    call.reject("Scanning Failed.")
+                    call.reject("Sikertelen szkennelés ("+result.resultCode+")")
                 }
             } catch (exception: Exception) {
                 Timber.e(exception)
