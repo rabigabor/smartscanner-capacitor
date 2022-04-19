@@ -28,7 +28,7 @@ extension SmartScannerPlugin {
         // check for permission
         let authStatus = AVCaptureDevice.authorizationStatus(for: .video)
         if authStatus == .restricted || authStatus == .denied {
-            call?.reject("User denied access to camera")
+            call?.reject("Hiányzó kamera jogosultság")
             return
         }
         // we either already have permission or can prompt
@@ -40,7 +40,7 @@ extension SmartScannerPlugin {
                     print("HELLO")
                 }
             } else {
-                self?.call?.reject("User denied access to camera")
+                self?.call?.reject("Hiányzó kamera jogosultság")
             }
         }
     }
