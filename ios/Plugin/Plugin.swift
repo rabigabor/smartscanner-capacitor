@@ -21,8 +21,9 @@ public class SmartScannerPlugin: CAPPlugin {
     @objc func executeScanner(_ call: CAPPluginCall) {
         self.call = call
         let options = call.getObject("options") ?? [:]
-        let mode = options["mode"] as! String        
-        self.showCamera(mode)
+        let mode = options["mode"] as! String
+        let format = options["format"] as! String
+        self.showCamera(mode, format)
         /*if(mode=="barcode"){
             self.showCamera(mode)
             /*call.resolve(["scanner_result":["value": "DIGITHOTEL_OKMANYOLVASO|digithotel|demo|1938"]])*/
