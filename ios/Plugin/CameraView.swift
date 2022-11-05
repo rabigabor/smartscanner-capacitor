@@ -213,111 +213,182 @@ class SmartScannerViewController: UIViewController {
       self.updatePreviewOverlayViewWithLastFrame()
       weak var weakSelf = self
       DispatchQueue.main.sync {
-        guard let strongSelf = weakSelf else {
-          print("Self is nil!")
-          return
-        }
-
-        var prevLine = ""
-        var rawAll = ""
-        var rawFullRead = ""
-        // Blocks.
-        for block in recognizedText.blocks {
-          // Lines.
-          for line in block.lines {
-            rawAll.append(line.text+"\n")
-            if (line.text.contains("<") || (prevLine != "" && prevLine.contains("<") && prevLine.length == line.text.length)
-            ) {
-                rawFullRead.append(line.text+"\n")
-                
-                /*
-                  let points = strongSelf.convertedPoints(
-                    from: line.cornerPoints, width: width, height: height)
-                  UIUtilities.addShape(
-                    withPoints: points,
-                    to: strongSelf.annotationOverlayView,
-                    color: UIColor.orange
-                  )
-                */
-            }
-            prevLine = line.text;
+          guard let strongSelf = weakSelf else {
+              print("Self is nil!")
+              return
           }
-        }
-        
-        do{
-            let cleanMrz = try self.cleaner.clean(rawFullRead)
-            print("\n\n\n\(cleanMrz)")
-            print("timeee", analyzeStart, Int64(Date().timeIntervalSince1970*1000)-analyzeStart, analyzeTime)
-            
-            if (!cleanMrz.starts(with: "I<HUN") || ((Int64(Date().timeIntervalSince1970*1000)-analyzeStart) > analyzeTime)){
-                print("ignoring analyzeTime \((!cleanMrz.starts(with: "I<HUN"))) or \(((Int64(Date().timeIntervalSince1970*1000)-analyzeStart) > analyzeTime)))")
-            }else{
-                print("still in analyzeTime and format is ok!")
-
-                if(
-                    !rawAll.contains("Anyja") &&
-                  !rawAll.contains("anyja") &&
-                  !rawAll.contains("Mother") &&
-                  !rawAll.contains("mother")
-                ){
-                    throw MrzError.IllegalArgument("Could not find mother's name.")
-                }else{
-                  print("Check mother's name OK")
-                }
-                if(
-                  !rawAll.contains("hely") &&
-                  !rawAll.contains("place") &&
-                  !rawAll.contains("Hely") &&
-                  !rawAll.contains("Place")
-                ){
-                    throw MrzError.IllegalArgument("Could not find birth place.")
-                }else{
-                  print("Check birth place OK")
-                }
-                print("rawAll", rawAll)
-            }
-            let record = try self.cleaner.parseAndClean(cleanMrz)
-            
-            let dateOfBirth = record.dateOfBirth.toStringNormal()
-            let expirationDate = record.expirationDate.toStringNormal()
-            
-            let code = record.code.rawValue
-            let code1 = record.code1
-            let code2 = record.code2
-            let documentNumber = record.documentNumber
-            let issuingCountry = record.issuingCountry
-            let givenNames = record.givenNames
-            let nationality = record.nationality
-            let validComposite = record.validComposite
-            let sex = (record.sex.rawValue == "M" ? "Male" : (record.sex.rawValue == "F" ? "Female" : "Unspecified"))
-            let mrz = try record.toMrz()
-            let surname = record.surname
-            let format = record.format.toString()
-            
-            let scannerResult: Dictionary<String, Any> = (["image": "---",
-                "code": code,
-                "code1": code1,
-                "code2": code2,
-                "dateOfBirth": dateOfBirth,
-                "documentNumber": documentNumber,
-                "expirationDate": expirationDate,
-                "format": format,
-                "givenNames": givenNames,
-                "issuingCountry": issuingCountry,
-                "nationality": nationality,
-                "sex": sex,
-                "surname": surname,
-                "mrz": mrz,
-                "validComposite": validComposite,
-                "rawAll": rawAll
-            ])
-            
-            self.call?.resolve(["scanner_result": scannerResult])
-            self.dismiss(animated: true, completion: nil)
-        } catch{
-            print("Parsing error", error)
-            return
-        }
+          
+          if(format == "driver_license"){
+              var rawAll = ""
+              var scannerResult: Dictionary<String, String> = ([
+                "image": "",
+                "code": "",
+                "code1": "",
+                "code2": "",
+                "dateOfBirth": "",
+                "documentNumber": "",
+                "expirationDate": "",
+                "format": "driver_license",
+                "givenNames": "",
+                "issuingCountry": "HUN",
+                "nationality": "HUN",
+                "sex": "",
+                "surname": "",
+                "mrz": "",
+                "validComposite": "true",
+                "rawAll": ""
+              ])
+              for block in recognizedText.blocks {
+                  for line in block.lines {
+                      rawAll.append(line.text+"\n")
+                      for pair in DriverLicenseCheckPairs {
+                          let prefix = pair[0]
+                          let field = pair[1]
+                          if (line.text.starts(with: prefix)){
+                              scannerResult[field] = line.text.substring(fromIndex: prefix.length).trimmingCharacters(in: .whitespacesAndNewlines)
+                              break
+                          }
+                      }
+                  }
+              }
+              
+              do{
+                  if(
+                    scannerResult["dateOfBirth"] == "" ||
+                    scannerResult["expirationDate"] == "" ||
+                    scannerResult["surname"] == "" ||
+                    scannerResult["givenNames"] == "" ||
+                    scannerResult["documentNumber"] == ""
+                    
+                  ){
+                      throw MrzError.IllegalArgument("Some field is missing")
+                  }
+                  
+                  
+                  scannerResult["dateOfBirth"] = scannerResult["dateOfBirth"]?.replacingOccurrences(of: ",", with: "").replacingOccurrences(of: ".", with: "").replacingOccurrences(of: " ", with: "")
+                  scannerResult["expirationDate"] = scannerResult["expirationDate"]?.replacingOccurrences(of: ",", with: "").replacingOccurrences(of: ".", with: "").replacingOccurrences(of: " ", with: "")
+                  
+                  if(
+                    (scannerResult["dateOfBirth"]?.length != 6 && scannerResult["dateOfBirth"]?.length != 8) ||
+                    (scannerResult["expirationDate"]?.length != 6 && scannerResult["expirationDate"]?.length != 8)
+                  ){
+                      throw MrzError.IllegalArgument("Some field is missing")
+                  }
+                  scannerResult["rawAll"] = rawAll
+                  
+                  self.call?.resolve(["scanner_result": scannerResult])
+                  self.dismiss(animated: true, completion: nil)
+                  
+              } catch{
+                  print("Parsing error", error)
+                  return
+              }
+              
+          } else {
+              
+              
+              var prevLine = ""
+              var rawAll = ""
+              var rawFullRead = ""
+              // Blocks.
+              for block in recognizedText.blocks {
+                  // Lines.
+                  for line in block.lines {
+                      rawAll.append(line.text+"\n")
+                      if (line.text.contains("<") || (prevLine != "" && prevLine.contains("<") && prevLine.length == line.text.length)
+                      ) {
+                          rawFullRead.append(line.text+"\n")
+                          
+                          /*
+                           let points = strongSelf.convertedPoints(
+                           from: line.cornerPoints, width: width, height: height)
+                           UIUtilities.addShape(
+                           withPoints: points,
+                           to: strongSelf.annotationOverlayView,
+                           color: UIColor.orange
+                           )
+                           */
+                      }
+                      prevLine = line.text;
+                  }
+              }
+              
+              do{
+                  let cleanMrz = try self.cleaner.clean(rawFullRead)
+                  print("\n\n\n\(cleanMrz)")
+                  print("timeee", analyzeStart, Int64(Date().timeIntervalSince1970*1000)-analyzeStart, analyzeTime)
+                  
+                  if (!cleanMrz.starts(with: "I<HUN") || ((Int64(Date().timeIntervalSince1970*1000)-analyzeStart) > analyzeTime)){
+                      print("ignoring analyzeTime \((!cleanMrz.starts(with: "I<HUN"))) or \(((Int64(Date().timeIntervalSince1970*1000)-analyzeStart) > analyzeTime)))")
+                  }else{
+                      print("still in analyzeTime and format is ok!")
+                      
+                      if(
+                        !rawAll.contains("Anyja") &&
+                        !rawAll.contains("anyja") &&
+                        !rawAll.contains("Mother") &&
+                        !rawAll.contains("mother")
+                      ){
+                          throw MrzError.IllegalArgument("Could not find mother's name.")
+                      }else{
+                          print("Check mother's name OK")
+                      }
+                      if(
+                        !rawAll.contains("hely") &&
+                        !rawAll.contains("place") &&
+                        !rawAll.contains("Hely") &&
+                        !rawAll.contains("Place")
+                      ){
+                          throw MrzError.IllegalArgument("Could not find birth place.")
+                      }else{
+                          print("Check birth place OK")
+                      }
+                      print("rawAll", rawAll)
+                  }
+                  let record = try self.cleaner.parseAndClean(cleanMrz)
+                  
+                  let dateOfBirth = record.dateOfBirth.toStringNormal()
+                  let expirationDate = record.expirationDate.toStringNormal()
+                  
+                  let code = record.code.rawValue
+                  let code1 = record.code1
+                  let code2 = record.code2
+                  let documentNumber = record.documentNumber
+                  let issuingCountry = record.issuingCountry
+                  let givenNames = record.givenNames
+                  let nationality = record.nationality
+                  let validComposite = record.validComposite
+                  let sex = (record.sex.rawValue == "M" ? "Male" : (record.sex.rawValue == "F" ? "Female" : "Unspecified"))
+                  let mrz = try record.toMrz()
+                  let surname = record.surname
+                  let format = record.format.toString()
+                  
+                  let scannerResult: Dictionary<String, Any> = (["image": "---",
+                                                                 "code": code,
+                                                                 "code1": code1,
+                                                                 "code2": code2,
+                                                                 "dateOfBirth": dateOfBirth,
+                                                                 "documentNumber": documentNumber,
+                                                                 "expirationDate": expirationDate,
+                                                                 "format": format,
+                                                                 "givenNames": givenNames,
+                                                                 "issuingCountry": issuingCountry,
+                                                                 "nationality": nationality,
+                                                                 "sex": sex,
+                                                                 "surname": surname,
+                                                                 "mrz": mrz,
+                                                                 "validComposite": validComposite,
+                                                                 "rawAll": rawAll
+                                                                ])
+                  
+                  self.call?.resolve(["scanner_result": scannerResult])
+                  self.dismiss(animated: true, completion: nil)
+                  
+              } catch {
+                  print("Parsing error", error)
+                  return
+              }
+          }
       }
         
     }

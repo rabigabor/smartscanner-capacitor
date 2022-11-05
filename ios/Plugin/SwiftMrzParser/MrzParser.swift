@@ -7,6 +7,30 @@
 
 import Foundation
 
+
+public var DriverLicenseCheckPairs = [
+    ["1.", "surname"],
+    ["1,", "surname"],
+    ["2.", "givenNames"],
+    ["2,", "givenNames"],
+    ["3.", "dateOfBirth"],
+    ["3,", "dateOfBirth"],
+    ["5.", "documentNumber"],
+    ["5,", "documentNumber"],
+    ["4(b).", "expirationDate"],
+    ["4(b),", "expirationDate"],
+    ["4(b)", "expirationDate"],
+    ["4 b).", "expirationDate"],
+    ["4 b),", "expirationDate"],
+    ["4 b)", "expirationDate"],
+    ["4b).", "expirationDate"],
+    ["4b),", "expirationDate"],
+    ["4b)", "expirationDate"],
+    ["4b.", "expirationDate"],
+    ["4b,", "expirationDate"],
+    ["4b", "expirationDate"]
+];
+
 public class MrzParser{
     /**
      * The MRZ record, not null.

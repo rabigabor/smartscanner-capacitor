@@ -22,7 +22,7 @@ public class SmartScannerPlugin: CAPPlugin {
         self.call = call
         let options = call.getObject("options") ?? [:]
         let mode = options["mode"] as! String
-        let format = options["format"] as! String
+        let format = options["mrzFormat"] as? String ?? ""
         self.showCamera(mode, format)
         /*if(mode=="barcode"){
             self.showCamera(mode)
