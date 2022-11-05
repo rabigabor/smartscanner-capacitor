@@ -17,7 +17,7 @@ import MLKitBarcodeScanning
 
 
 extension SmartScannerPlugin {
-    func showCamera(_ mode: String) {
+    func showCamera(_ mode: String, _ format: String) {
         // check if we have a camera
         if (bridge?.isSimEnvironment ?? false) || !UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera) {
             CAPLog.print("⚡️ ", self.pluginId, "-", "Camera not available in simulator")
@@ -35,7 +35,7 @@ extension SmartScannerPlugin {
         AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
             if granted {
                 DispatchQueue.main.async {
-                    let viewController = SmartScannerViewController(nibName: "SmartScannerUIView", bundle: nil, mode: mode, call: (self?.call)!)
+                    let viewController = SmartScannerViewController(nibName: "SmartScannerUIView", bundle: nil, mode: mode, format: format, call: (self?.call)!)
                     self?.bridge?.viewController?.present(viewController, animated: true, completion: nil)
                     print("HELLO")
                 }
@@ -61,13 +61,15 @@ class SmartScannerViewController: UIViewController {
     private var cleaner: MrzCleaner;
     
     private var mode: String = ""
+    private var format: String = ""
     
     private var analyzeStart: Int64 = Int64(Date().timeIntervalSince1970*1000)
     
     private var analyzeTime: Int64 = 5000;
     
-    required init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?, mode: String, call: CAPPluginCall) {
+    required init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?, mode: String, format: String, call: CAPPluginCall) {
         self.mode = mode
+        self.format = format
         self.call = call
         self.cleaner = MrzCleaner()
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
