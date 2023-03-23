@@ -258,7 +258,7 @@ public class MrzParser{
 
         let digit: String = try MrzParser.computeCheckDigit(str)
         var checkDigit: String = "0";
-        if(rows[row].length < col){
+        if(rows[row].length > col){
             checkDigit = rows[row][col];
         }else{
             print("PARSER getting last \(rows[row].length) row \(rows[row])")
