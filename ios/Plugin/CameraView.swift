@@ -20,7 +20,7 @@ extension SmartScannerPlugin {
     func showCamera(_ mode: String, _ format: String) {
         // check if we have a camera
         if (bridge?.isSimEnvironment ?? false) || !UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera) {
-            CAPLog.print("⚡️ ", self.pluginId, "-", "Camera not available in simulator")
+            CAPLog.print("⚡️ ", self.identifier, "-", "Camera not available in simulator")
             bridge?.alert("Camera Error", "Camera not available in Simulator")
             call?.reject("Camera not available while running in Simulator")
             return 
