@@ -81,9 +81,11 @@ dependencies {
 
     implementation project(':capacitor-android')
 
-    debugImplementation files('aar/smartscannerlib-debug.aar')
-    releaseImplementation files('aar/smartscannerlib-release.aar')
-    implementation files('aar/smartscanner-mrz-parser.aar')
+    // debugImplementation files('aar/smartscannerlib-debug.aar')
+    // releaseImplementation files('aar/smartscannerlib-release.aar')
+    // implementation files('aar/smartscanner-mrz-parser.aar')
+    implementation project(":aar")
+
 
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
