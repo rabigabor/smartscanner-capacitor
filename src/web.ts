@@ -1,12 +1,9 @@
 import { WebPlugin } from '@capacitor/core';
-import type { SmartScannerPluginInterface } from './definitions';
+import type { SmartScannerPluginBarcodeOptions, SmartScannerPluginInterface, SmartScannerPluginMrzOptions } from './definitions';
 
 export class SmartScannerPluginWeb extends WebPlugin implements SmartScannerPluginInterface {
   constructor() {
-    super({
-      name: 'SmartScannerPlugin',
-      platforms: ['web'],
-    });
+    super();
   }
 
   async echo(options: { value: string }): Promise<{ value: string }> {
@@ -14,7 +11,7 @@ export class SmartScannerPluginWeb extends WebPlugin implements SmartScannerPlug
     return options;
   }
 
-  async executeScanner(options: { mode: string, action: string }): Promise<void> {
+  async executeScanner(options: SmartScannerPluginMrzOptions | SmartScannerPluginBarcodeOptions): Promise<void> {
     console.log('executeScanner', options);
   }
 }
